@@ -69,7 +69,7 @@ with ac:
             # Bouton pour effectuer la prédiction
             if st.button("Effectuer la prédiction"):
             # Effectuer une requête GET à l'API FastAPI
-                api_url = f"http://127.0.0.1:8000/predict/{client_id}"
+                api_url = f"https://back-xz3m.onrender.com/predict/{client_id}"
                 response = requests.get(api_url)
         
                 if response.status_code == 200:
@@ -89,7 +89,7 @@ with ac:
                     col2.plotly_chart(set_gauge(client_id),use_container_width=True)
 with inf:
     st.title("Informations du client")
-    url=f"http://127.0.0.1:8000/get_info/{client_id}"
+    url=f"https://back-xz3m.onrender.com/get_info/{client_id}"
     response_info=requests.get(url).json()
     st.write('Client_id :',response_info['client_id'])
     st.write('EXt_SOURCE_1 :',response_info['ext_source_1'])
