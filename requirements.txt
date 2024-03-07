@@ -1,0 +1,12 @@
+pandas
+streamlit == 1.30.0
+requests
+shap
+plotly.express
+datetime
+streamlit_shap
+joblib
+numpy
+altair
+tkinter.ttk
+plotly
