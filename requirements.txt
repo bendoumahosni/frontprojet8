@@ -8,5 +8,4 @@ streamlit_shap
 joblib
 numpy
 altair
-tkinter.ttk
 plotly
