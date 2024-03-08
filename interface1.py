@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[1]:
-
-
 from tkinter.ttk import Style
 import streamlit as st
 import requests
@@ -68,10 +62,10 @@ with ac:
 
             # Bouton pour effectuer la prédiction
             if st.button("Effectuer la prédiction"):
-            # La requête GET à l'API FastAPI
+            # Effectuer une requête GET à l'API FastAPI
                 api_url = f"https://back-xz3m.onrender.com/predict/{client_id}"
                 response = requests.get(api_url)
-        
+
                 if response.status_code == 200:
                     prediction_result = response.json()
                     st.success(f"Classe prédite  : {prediction_result['predicted_class']}")
@@ -80,10 +74,10 @@ with ac:
                         st.markdown('<p style="color:green;font-size: 50px;">Crédit accepté</p>', unsafe_allow_html=True)  
                     else:
                         st.markdown('<p style="color:red;font-size: 50px;">Crédit refusé</p>', unsafe_allow_html=True)
-            
+
                 else:
                     st.error(f"Erreur lors de la requête à l'API. Code d'erreur : {response.status_code}")
-            
+
                 with col2:
                     st.markdown("<h1 style='text-align: center;color: red;'>Jauge de classification</h1>", unsafe_allow_html=True)
                     col2.plotly_chart(set_gauge(client_id),use_container_width=True)
@@ -98,7 +92,7 @@ with inf:
     st.write('AMT_GOOD_PRICE :',response_info['good_price'])
     st.write('AMT_ANNUITY :',response_info['amt_annuity'])
     st.write('PAYMENT_RATE :',response_info['payment_rate'])
-    
+
     date_reference = datetime.now()
     duree_en_jours = response_info['days_birth']  
     date_resultat = date_reference + timedelta(days=duree_en_jours)
@@ -117,23 +111,33 @@ with imp:
     explainer = shap.Explainer(model)
     shap_values = explainer.shap_values(df.drop(columns=['SK_ID_CURR']))
 
-    # summary plot
+    # Afficher un summary plot
     fig_summary, ax_summary = plt.subplots()
     shap.summary_plot(shap_values, df.drop(columns=['SK_ID_CURR']), show=True)
     st.pyplot(fig_summary)
 
-    st.write('Force Plot :')
-    # importance locale
+    st.markdown("<h1 style='text-align: center;color: red;'>Importance locale</h1>", unsafe_allow_html=True)
+    st.markdown('Force Plot :', unsafe_allow_html=True)
+    #
     X=df[df['SK_ID_CURR']==client_id].drop(columns=['SK_ID_CURR'])
     shap_values_l = explainer.shap_values(X)
-    st_shap(shap.force_plot(explainer.expected_value[0], shap_values_l[0] , X), height=400, width=1000)
+    st_shap(shap.force_plot(explainer.expected_value[0], shap_values_l[0], X), height=400, width=1000)
 
-    st.write('affichage avec plusieurs variables :')
+
+    st.markdown("Affichage avec plusieurs variables", unsafe_allow_html=True)
     X=df.drop(columns=['SK_ID_CURR'])
     shap_values = explainer.shap_values(X)
     st_shap(shap.force_plot(explainer.expected_value[0], shap_values[0], X), height=400, width=1000)
-       
-   
+
+    ###########################################
+    explainer = shap.explainers.Tree(model)
+    shap_values = explainer(X)
+    #st_shap(shap.plots._waterfall.waterfall_legacy(explainer.expected_value[0],shap_values[0].values[:,0],
+    #                                    feature_names=X.columns), height=400, width=1000)
+    #############################################
+    shap_values_explaination = shap.Explanation(shap_values[0], feature_names=X.columns.tolist()) 
+    shap.plots.heatmap(shap_values_explaination)
+
 
 with uni_biv:
     uva=st.container()
@@ -153,36 +157,29 @@ with uni_biv:
                     line=dict(color="red", width=2),
                     annotation_text=f"Client {client_id}",
                     annotation_position="top left")
-            
+
             return fig 
         if varibale:
             st.plotly_chart(plot_distribution(varibale,client_id))
-            
+
     with bva:    
         variable1 = st.selectbox("Selectionner une premiere variable: ",df.drop(columns=['SK_ID_CURR']).columns)
         variable2 = st.selectbox("Selectionner une deuxieme variable: ",df.drop(columns=['SK_ID_CURR']).columns)
         def plot_bivariate(feature1, feature2, client_id):
             fig = px.scatter(df, x=feature1, y=feature2, 
-                            hover_data=['SK_ID_CURR'],color= df['classe'] , color_continuous_scale='Blues',
+                            hover_data=['SK_ID_CURR'],color= df['classe'] , color_discrete_map={0: 'blue', 1: 'red'},
                             title=f"Analyse bivariée entre {feature1} et {feature2}")
             fig.add_trace(go.Scatter(x=[df.loc[df['SK_ID_CURR'] == client_id, feature1].iloc[0]],
                                     y=[df.loc[df['SK_ID_CURR'] == client_id, feature2].iloc[0]],
                                     mode="markers",
                                     marker=dict(color="red", size=10),
                                     name=f"Client {client_id}"))
+
             fig.update_layout(
                 plot_bgcolor='lightgray',  
                 paper_bgcolor='lightgray',  
                 )
-            
             st.plotly_chart(fig)
         if variable1:
             if variable2:
                 plot_bivariate(variable1,variable2,client_id)
-
-    
-    
-
-    
-    
-    
