@@ -68,7 +68,7 @@ with ac:
 
             # Bouton pour effectuer la prédiction
             if st.button("Effectuer la prédiction"):
-            # Effectuer une requête GET à l'API FastAPI
+            # La requête GET à l'API FastAPI
                 api_url = f"https://back-xz3m.onrender.com/predict/{client_id}"
                 response = requests.get(api_url)
         
@@ -117,32 +117,24 @@ with imp:
     explainer = shap.Explainer(model)
     shap_values = explainer.shap_values(df.drop(columns=['SK_ID_CURR']))
 
-    # Afficher un summary plot
+    # summary plot
     fig_summary, ax_summary = plt.subplots()
     shap.summary_plot(shap_values, df.drop(columns=['SK_ID_CURR']), show=True)
     st.pyplot(fig_summary)
 
     st.markdown('Force Plot :', unsafe_allow_html=True)
-    # Display force plot for multiple instances
+    # importance locale
     X=df[df['SK_ID_CURR']==client_id].drop(columns=['SK_ID_CURR'])
     shap_values_l = explainer.shap_values(X)
     st_shap(shap.force_plot(explainer.expected_value[0], shap_values_l[0], X), height=400, width=1000)
 
 
-    st.title("")
+    st.title("affichage avec plusieurs variables")
     X=df.drop(columns=['SK_ID_CURR'])
     shap_values = explainer.shap_values(X)
     st_shap(shap.force_plot(explainer.expected_value[0], shap_values[0], X), height=400, width=1000)
        
-    ###########################################
-    explainer = shap.explainers.Tree(model)
-    shap_values = explainer(X)
-    st_shap(shap.plots._waterfall.waterfall_legacy(explainer.expected_value[0],shap_values[0].values[:,0],
-                                        feature_names=X.columns), height=400, width=1000)
-    #############################################
-    shap_values_explaination = shap.Explanation(shap_values[0], feature_names=X.columns.tolist()) 
-    shap.plots.heatmap(shap_values_explaination)
-    
+   
 
 with uni_biv:
     uva=st.container()
@@ -180,8 +172,8 @@ with uni_biv:
                                     marker=dict(color="red", size=10),
                                     name=f"Client {client_id}"))
             fig.update_layout(
-                plot_bgcolor='lightgray',  # Changer la couleur de l'arrière-plan
-                paper_bgcolor='lightgray',  # Changer la couleur du papier (l'arrière-plan de la zone du graphique)
+                plot_bgcolor='lightgray',  
+                paper_bgcolor='lightgray',  
                 )
             
             st.plotly_chart(fig)
