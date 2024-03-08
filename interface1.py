@@ -122,13 +122,13 @@ with imp:
     shap.summary_plot(shap_values, df.drop(columns=['SK_ID_CURR']), show=True)
     st.pyplot(fig_summary)
 
-    st.markdown('Force Plot :', unsafe_allow_html=True)
+    st.write('Force Plot :')
     # importance locale
     X=df[df['SK_ID_CURR']==client_id].drop(columns=['SK_ID_CURR'])
     shap_values_l = explainer.shap_values(X)
-    st_shap(shap.force_plot(explainer.expected_value[0], shap_values_l[0], X), height=400, width=1000)
+    st_shap(shap.force_plot(explainer.expected_value[0], shap_values_l[0] , X), height=400, width=1000)
 
-    st.markdown('affichage avec plusieurs variables :', unsafe_allow_html=True)
+    st.write('affichage avec plusieurs variables :')
     X=df.drop(columns=['SK_ID_CURR'])
     shap_values = explainer.shap_values(X)
     st_shap(shap.force_plot(explainer.expected_value[0], shap_values[0], X), height=400, width=1000)
