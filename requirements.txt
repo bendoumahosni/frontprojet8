@@ -1,7 +1,7 @@
 pandas
 streamlit == 1.30.0
 requests
-shap
+shap == 0.44.1
 plotly.express
 datetime
 streamlit_shap
