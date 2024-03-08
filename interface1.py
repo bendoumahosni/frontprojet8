@@ -128,8 +128,7 @@ with imp:
     shap_values_l = explainer.shap_values(X)
     st_shap(shap.force_plot(explainer.expected_value[0], shap_values_l[0], X), height=400, width=1000)
 
-
-    st.title("affichage avec plusieurs variables")
+    st.markdown('affichage avec plusieurs variables :', unsafe_allow_html=True)
     X=df.drop(columns=['SK_ID_CURR'])
     shap_values = explainer.shap_values(X)
     st_shap(shap.force_plot(explainer.expected_value[0], shap_values[0], X), height=400, width=1000)
