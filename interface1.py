@@ -172,13 +172,17 @@ with uni_biv:
         variable2 = st.selectbox("Selectionner une deuxieme variable: ",df.drop(columns=['SK_ID_CURR']).columns)
         def plot_bivariate(feature1, feature2, client_id):
             fig = px.scatter(df, x=feature1, y=feature2, 
-                            hover_data=['SK_ID_CURR'],color= df['classe'] , color_discrete_map={0: 'blue', 1: 'red'},
+                            hover_data=['SK_ID_CURR'],color= df['classe'] , color_continuous_scale='Blues',
                             title=f"Analyse bivariée entre {feature1} et {feature2}")
             fig.add_trace(go.Scatter(x=[df.loc[df['SK_ID_CURR'] == client_id, feature1].iloc[0]],
                                     y=[df.loc[df['SK_ID_CURR'] == client_id, feature2].iloc[0]],
                                     mode="markers",
                                     marker=dict(color="red", size=10),
                                     name=f"Client {client_id}"))
+            fig.update_layout(
+                plot_bgcolor='lightgray',  # Changer la couleur de l'arrière-plan
+                paper_bgcolor='lightgray',  # Changer la couleur du papier (l'arrière-plan de la zone du graphique)
+                )
             
             st.plotly_chart(fig)
         if variable1:
